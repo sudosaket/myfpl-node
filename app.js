@@ -45,7 +45,7 @@ app.get('/updatedata', function(req, res, next) {
           body: body.elements[i]
         }, function(error, response) {
           // console.log(error);
-          console.log('# '+ i + '. ' + body.elements[i].web_name + ' inserted!');
+          console.log('# '+ (i+1) + '. ' + body.elements[i].web_name + ' inserted!');
         });
       }
       res.send('Done!');
