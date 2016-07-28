@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 router.get('/login', function(req, res) {
-    res.render('login');
+    res.render('auth/login');
 });
 
 router.get('/logout', function(req, res) {
@@ -20,7 +20,7 @@ router.route('/createuser')
 
 router.all('/*', function(req, res, next) {
     // TODO: if already logged in, then redirect to home else to login page
-    res.redirect(req.baseUrl+'/login');
+    res.redirect('./login');
 });
 
 module.exports = router
