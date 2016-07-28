@@ -1,0 +1,13 @@
+<script src="https://cdn.auth0.com/js/lock/10.0/lock.min.js"></script>
+<script type="text/javascript">
+  var lock = new Auth0Lock('orGerVkJF59hO4HbkNtScIAo9Obwq78J', 'saketmehta.auth0.com', {
+    auth: {
+      redirectUrl: 'http://139.59.4.200:3000/callback',
+      responseType: 'code',
+      params: {
+        scope: 'openid email' // Learn about scopes: https://auth0.com/docs/scopes
+      }
+    }
+  });
+</script>
+<button onclick="lock.show();">Login</button>

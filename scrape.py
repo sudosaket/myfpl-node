@@ -20,21 +20,4 @@ br.set_handle_refresh(mechanize._http.HTTPRefreshProcessor(), max_time=1)
 
 br.addheaders = [('User-agent', 'Chrome')]
 
-# The site we will navigate into, handling it's session
-# br.open('https://fantasy.premierleague.com')
-#
-# # View available forms
-# for f in br.forms():
-#     print f
-#
-# # Select the second (index one) form (the first form is a search query box)
-# br.select_form(nr=0)
-#
-# # User credentials
-# br.form['login'] = '<username>'
-# br.form['password'] = '<password>'
-#
-# # Login
-# br.submit()
-
-print(br.open('https://fantasy.premierleague.com/a/statistics/total_points').read())
+print(br.open('https://fantasy.premierleague.com/drf/bootstrap-static').read())
