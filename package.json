@@ -12,6 +12,7 @@
     "elasticsearch": "^11.0.1",
     "express": "~4.13.4",
     "express-session": "^1.14.0",
+    "fs": "0.0.2",
     "jade": "~1.11.0",
     "morgan": "~1.7.0",
     "passport": "^0.3.2",
