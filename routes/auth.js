@@ -1,26 +1,62 @@
 var express = require('express');
 var router = express.Router();
-
-router.get('/login', function(req, res) {
-    res.render('auth/login');
+var elasticsearch = require('elasticsearch');
+var es = new elasticsearch.Client({
+    host: 'localhost:9200'
 });
 
-router.get('/logout', function(req, res) {
-    // TODO: implement logout logic
+router.route('/login')
+    .get(function (req, res) {
+        res.render('login', { title: "Login", currentRoute: 'login' });
+    })
+    .post(function (req, res) {
+        es.get({
+            index: "game",
+            type: "account",
+            id: req.body.inputUsername
+        }, function (error, response) {
+            if (response._source.password === req.body.inputPassword) {
+                req.session.user = response._source;
+                req.session.loggedIn = true;
+                res.redirect('/');
+            } else {
+                res.redirect('/login');
+            }
+        });
+    });
+
+router.get('/logout', function (req, res) {
+    req.session.destroy();
     res.redirect('/');
 });
 
-router.route('/createuser')
-    .get(function(req, res) {
-        res.send('New user form.');
+router.route('/signup')
+    .get(function (req, res) {
+        res.render('signup', { title: "Signup", currentRoute: "signup" });
     })
-    .post(function(req, res) {
-        res.send('Processing submitted form.');
+    .post(function (req, res) {
+        es.create({
+            index: "game",
+            type: "account",
+            id: req.body.inputUsername,
+            body: {
+                email: req.body.inputEmail,
+                username: req.body.inputUsername,
+                name: req.body.inputFullName,
+                password: req.body.inputPassword,
+                team_name: req.body.inputTeamName,
+            }
+        }, function (error, response) {
+            es.get({
+                index: "game",
+                type: "account",
+                id: response._id
+            }, function (error, response) {
+                req.session.user = response._source;
+                req.session.loggedIn = true;
+                res.redirect('/');
+            });
+        });
     });
-
-router.all('/*', function(req, res, next) {
-    // TODO: if already logged in, then redirect to home else to login page
-    res.redirect('./login');
-});
 
 module.exports = router

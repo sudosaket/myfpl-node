@@ -1,0 +1,11 @@
+extends layout
+
+block scripts
+  link(href='stylesheets/index.css', rel='stylesheet')
+
+block content
+  div.welcome
+    if session.loggedIn
+      h1 Welcome #{session.user.name}!
+    else
+      h1 Welcome!

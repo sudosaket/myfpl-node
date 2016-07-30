@@ -1,12 +1,7 @@
 "use strict"
 var request = require('request');
 var fs = require('fs');
-
-// elasticsearch setup
-var elasticsearch = require('elasticsearch');
-var es_client = new elasticsearch.Client({
-    host: 'localhost:9200'
-});
+var es_client = require('./esconfig').client;
 
 function get_data_from_fpl(req, res, callback) {
     request.get({ url: 'https://fantasy.premierleague.com/drf/bootstrap-static', json: true }, function (error, response, body) {

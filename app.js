@@ -4,29 +4,36 @@ var express = require('express');
 var path = require('path');
 var request = require('request');
 var cookieParser = require('cookie-parser');
-
-// elasticsearch setup
-var elasticsearch = require('elasticsearch');
-var esclient = new elasticsearch.Client({
-    host: 'localhost:9200'
-});
+var bodyParser = require('body-parser')
+var session = require('express-session')
 
 var app = express();
 
 //  view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set('view engine', 'pug');
 
 // middleware
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'bower_components')));
 app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(session({
+    secret: 'baby doll',
+    resave: false,
+    saveUninitialized: true
+}));
+app.use(function (req, res, next) {
+    res.locals.session = req.session;
+    next();
+});
 
 // routing
 var index = require('./routes/index');
 var auth = require('./routes/auth');
 var es = require('./routes/es');
 app.use('/', index);
-app.use('/auth', auth);
+app.use('/', auth);
 app.use('/es', es);
 
 // catch 404 and forward to error handler
@@ -41,6 +48,7 @@ app.use(function (req, res, next) {
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
+    app.locals.pretty = true;
     app.use(function (err, req, res, next) {
         res.status(err.status || 500);
         res.render('error', {

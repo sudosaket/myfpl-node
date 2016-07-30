@@ -1,0 +1,20 @@
+{
+  "name": "myfpl",
+  "authors": [
+    "Saket Mehta <saket.m17@outlook.com>"
+  ],
+  "description": "My FPL",
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "angularjs#^1.5.8",
+    "bootstrap": "^3.3.7"
+  }
+}
