@@ -18,7 +18,7 @@ router.all('/', function(req, res, next) {
   });
 }, function (req, res, next) {
   console.log(req.teams);
-  res.render('index', { title: 'Express', currentRoute: 'index', fixtures: req.fixtures, teams: req.teams });
+  res.render('index', { title: 'Home', currentRoute: 'index', fixtures: req.fixtures, teams: req.teams });
 });
 
 module.exports = router

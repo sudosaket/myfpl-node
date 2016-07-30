@@ -10,7 +10,6 @@ This is an attempt to truly make it a game.
 
 # Things to do
 
-* Add upcoming fixtures to home if not logged in
 * Add indexes for selected team, past teams
 * Add transfer history database
 * Add current selected team and points to home if logged in
