@@ -15,7 +15,7 @@ router.route('/login')
             type: "account",
             id: req.body.inputUsername
         }, function (error, response) {
-            if (response._source.password === req.body.inputPassword) {
+            if (response.found && response._source.password === req.body.inputPassword) {
                 req.session.user = response._source;
                 req.session.loggedIn = true;
                 res.redirect('/');
