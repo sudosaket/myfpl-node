@@ -3,10 +3,26 @@ var request = require('request');
 var fs = require('fs');
 var es_client = require('./esconfig').client;
 
-function get_data_from_fpl(req, res, callback) {
+function get_static_data_from_fpl(req, res, callback) {
     request.get({ url: 'https://fantasy.premierleague.com/drf/bootstrap-static', json: true }, function (error, response, body) {
         if (!error && response.statusCode == 200) {
-            fs.writeFile('fpl_data.json', JSON.stringify(body, null, 4), function (err) {
+            fs.writeFile('fpl_static_data.json', JSON.stringify(body, null, 4), function (err) {
+                if (err) {
+                    return console.log(err);
+                }
+                console.log("New data saved!");
+                callback(req, res);
+            });
+        } else {
+            throw error;
+        }
+    });
+}
+
+function get_dynamic_data_from_fpl(req, res, callback) {
+    request.get({ url: 'https://fantasy.premierleague.com/drf/bootstrap-dynamic', json: true }, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            fs.writeFile('fpl_dynamic_data.json', JSON.stringify(body, null, 4), function (err) {
                 if (err) {
                     return console.log(err);
                 }
@@ -20,7 +36,7 @@ function get_data_from_fpl(req, res, callback) {
 }
 
 function update_player_data(req, res, callback) {
-    fs.readFile('fpl_data.json', 'utf8', function (err, data) {
+    fs.readFile('fpl_static_data.json', 'utf8', function (err, data) {
         if (err) throw err;
         var body = JSON.parse(data);
         var counter = 0;
@@ -42,7 +58,7 @@ function update_player_data(req, res, callback) {
 }
 
 function update_team_data(req, res, callback) {
-    fs.readFile('fpl_data.json', 'utf8', function (err, data) {
+    fs.readFile('fpl_static_data.json', 'utf8', function (err, data) {
         if (err) throw err;
         var body = JSON.parse(data);
         var counter = 0;
@@ -64,7 +80,7 @@ function update_team_data(req, res, callback) {
 }
 
 function add_player_types_data(req, res, callback) {
-    fs.readFile('fpl_data.json', 'utf8', function (err, data) {
+    fs.readFile('fpl_static_data.json', 'utf8', function (err, data) {
         if (err) throw err;
         var body = JSON.parse(data);
         var counter = 0;
@@ -86,7 +102,7 @@ function add_player_types_data(req, res, callback) {
 }
 
 function update_gamesweek_data(req, res, callback) {
-    fs.readFile('fpl_data.json', 'utf8', function (err, data) {
+    fs.readFile('fpl_static_data.json', 'utf8', function (err, data) {
         if (err) throw err;
         var body = JSON.parse(data);
         var counter = 0;
@@ -108,7 +124,8 @@ function update_gamesweek_data(req, res, callback) {
 }
 
 module.exports = {
-    get_data_from_fpl: get_data_from_fpl,
+    get_static_data_from_fpl: get_static_data_from_fpl,
+    get_dynamic_data_from_fpl: get_dynamic_data_from_fpl,
     update_player_data: update_player_data,
     update_team_data: update_team_data,
     add_player_types_data: add_player_types_data,

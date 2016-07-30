@@ -2,7 +2,13 @@ var express = require('express');
 var router = express.Router();
 var es_utils = require('../es_utils');
 
-router.post('/get_data_from_fpl', function(req, res) {
+router.post('/get_static_data_from_fpl', function(req, res) {
+    es_utils.get_data_from_fpl(req, res, function(req, res) {
+        res.send('Loaded!');
+    });
+});
+
+router.post('/get_dynamic_data_from_fpl', function(req, res) {
     es_utils.get_data_from_fpl(req, res, function(req, res) {
         res.send('Loaded!');
     });

@@ -9,3 +9,14 @@ block content
       h1 Welcome #{session.user.name}!
     else
       h1 Welcome!
+  table.table.table-bordered
+    caption Next fixtures...
+    tbody
+      for fixture in fixtures 
+        tr
+          td= teams[fixture.team_h-1].name
+          td: span.badge-25(class=teams[fixture.team_h-1].short_name)
+          td= fixture.kickoff_time_formatted
+          td: span.badge-25(class=teams[fixture.team_a-1].short_name)
+          td= teams[fixture.team_a-1].name
+      
