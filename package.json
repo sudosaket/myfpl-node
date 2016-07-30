@@ -15,11 +15,7 @@
     "express-session": "^1.14.0",
     "fs": "0.0.2",
     "jade": "^1.11.0",
-    "morgan": "~1.7.0",
-    "passport": "^0.3.2",
-    "passport-auth0": "^0.5.2",
     "pug": "^2.0.0-beta4",
-    "request": "^2.74.0",
-    "serve-favicon": "~2.3.0"
+    "request": "^2.74.0"
   }
 }
