@@ -13,7 +13,7 @@ td span{
 }
 
 .badge-25 {
-    background-image: url('https://ismdj.scdn5.secure.raxcdn.com/static/libsass/plfpl/dist/pulselive/i/sprites/badges-25-sprite.png?27848e1b7541');
+    background-image: url('../images/badges-25-sprite.png');
     background-repeat: no-repeat;
     width: 25px;
     height: 25px;
@@ -24,7 +24,7 @@ td span{
 @media(-webkit-min-device-pixel-ratio:2),
 (min-resolution:192dpi) {
     .badge-25 {
-        background-image: url('https://ismdj.scdn5.secure.raxcdn.com/static/libsass/plfpl/dist/pulselive/i/sprites/badges-25-sprite@x2.png?27848e1b7541');
+        background-image: url('../images/badges-25-sprite.png');
         background-size: 200px 175px
     }
 }
