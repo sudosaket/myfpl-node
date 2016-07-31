@@ -7,7 +7,7 @@ var es = new elasticsearch.Client({
 
 router.route('/login')
     .get(function (req, res) {
-        res.render('login', { title: "Login", currentRoute: 'login' });
+        res.render('login', { title: "Login", currentRoute: 'login', query: req.query });
     })
     .post(function (req, res) {
         es.get({
@@ -18,9 +18,15 @@ router.route('/login')
             if (response.found && response._source.password === req.body.inputPassword) {
                 req.session.user = response._source;
                 req.session.loggedIn = true;
-                res.redirect('/');
+                if (req.query.next) {
+                    res.redirect(req.query.next);
+                } else {
+                    res.redirect('/');
+                }
+            } else if (!response.found) {
+                res.redirect('/login?err=username');
             } else {
-                res.redirect('/login');
+                res.redirect('/login?err=password');
             }
         });
     });
@@ -58,5 +64,52 @@ router.route('/signup')
             });
         });
     });
+
+router.route('/settings')
+    .get(function (req, res) {
+        if (req.session.loggedIn) {
+            res.render('settings', { title: 'Settings' });
+        } else {
+            res.redirect('login?next=settings');
+        }
+    })
+    .post(function (req, res) {
+        var doc = {};
+        if (req.body.inputName && req.body.inputName !== "") {
+            doc["name"] = req.body.inputName;
+        }
+        if (req.body.inputEmail && req.body.inputEmail !== "") {
+            doc["email"] = req.body.inputEmail;
+        }
+        if (req.body.inputUsername && req.body.inputUsername !== "") {
+            doc["username"] = req.body.inputUsername;
+        }
+        if (req.body.inputTeamName && req.body.inputTeamName !== "") {
+            doc["team_name"] = req.body.inputTeamName;
+        }
+        if (req.session.loggedIn) {
+            es.update({
+                index: "game",
+                type: "account",
+                id: req.session.user.username,
+                body: {
+                    doc: doc
+                }
+            }, function (error, response) {
+                if (error) throw error;
+                es.get({
+                    index: "game",
+                    type: "account",
+                    id: response._id
+                }, function (error, response) {
+                    req.session.user = response._source;
+                    req.session.loggedIn = true;
+                    res.redirect('settings?done=true')
+                });
+            });
+        } else {
+            res.redirect('login?next=settings');
+        }
+    })
 
 module.exports = router

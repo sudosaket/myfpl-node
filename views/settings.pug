@@ -1,0 +1,26 @@
+extends layout
+
+block scripts
+    link(href='stylesheets/settings.css', rel='stylesheet')
+
+block content
+    form.form-horizontal(method="post")
+        .form-group
+            label.col-sm-2.control-label(for='inputName') Full Name
+            .col-sm-10
+                input#inputName.form-control(name='inputName', type='text', placeholder=session.user.name)
+        .form-group
+            label.col-sm-2.control-label(for='inputEmail') Email
+            .col-sm-10
+                input#inputEmail.form-control(name='inputEmail', type='email', placeholder=session.user.email)
+        .form-group
+            label.col-sm-2.control-label(for='inputUsername') Username
+            .col-sm-10
+                input#inputUsername.form-control(name='inputUsername', type='text', placeholder=session.user.username)
+        .form-group
+            label.col-sm-2.control-label(for='inputTeamName') Team Name
+            .col-sm-10
+                input#inputTeamName.form-control(name='inputTeamName', type='text', placeholder=session.user.team_name)
+        .form-group
+            .col-sm-offset-2.col-sm-10
+                button.btn.btn-default(type='submit', action="settings") Update

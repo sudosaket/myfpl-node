@@ -1,0 +1,11 @@
+.welcome {
+  text-align: center;
+}
+
+.table {
+    text-align: center;
+}
+
+td:nth-of-type(1) {
+    font-weight: bold;
+}

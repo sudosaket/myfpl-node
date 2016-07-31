@@ -28,6 +28,9 @@ app.use(function (req, res, next) {
     next();
 });
 
+// set local variables
+app.locals.gw = 1;
+
 // routing
 var index = require('./routes/index');
 var auth = require('./routes/auth');
@@ -69,6 +72,6 @@ app.use(function (err, req, res, next) {
 });
 
 // start server
-app.listen(80, function () {
-    console.log('Example app listening on port 80!');
+app.listen(3000, function () {
+    console.log('Example app listening on port 3000!');
 });

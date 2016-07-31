@@ -1,0 +1,16 @@
+extends layout
+
+block scripts
+  link(href='stylesheets/standings.css', rel='stylesheet')
+
+block content
+  div.welcome: h1 Standings
+  table.table.table-bordered
+    tbody
+      for team in teams
+        tr
+          for account in accounts
+            if account._source.username == team._source.account
+              td.col-md-4= account._source.team_name
+              td.col-md-4= account._source.name
+          td.col-md-4= team._source.score_upto_now

@@ -6,6 +6,10 @@
     text-align: center;
 }
 
+th {
+    text-align: center;
+}
+
 td span{
     display:block;
     text-align:center;

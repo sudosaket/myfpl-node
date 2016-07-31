@@ -6,8 +6,10 @@ block scripts
 block content
     form.form-signin(method="post")
         h2.form-signin-heading Please sign in
-        label.sr-only(for='inputUsername') Email address
-        input#inputUsername.form-control(name='inputUsername', type='text', placeholder='Username', required='', autofocus='')
-        label.sr-only(for='inputPassword') Password
-        input#inputPassword.form-control(name='inputPassword', type='password', placeholder='Password', required='')
+        div.form-group(class=(query.err === "username")?"has-error":'')
+            label.sr-only(for='inputUsername') Email address
+            input#inputUsername.form-control(name='inputUsername', type='text', placeholder='Username', required='', autofocus='')
+        div.form-group(class=(query.err === "password")?"has-error":'')
+            label.sr-only(for='inputPassword') Password
+            input#inputPassword.form-control(name='inputPassword', type='password', placeholder='Password', required='')
         button.btn.btn-lg.btn-primary.btn-block(type='submit', action='login') Sign in

@@ -10,8 +10,5 @@ This is an attempt to truly make it a game.
 
 # Things to do
 
-* Add indexes for selected team, past teams
-* Add transfer history database
-* Add current selected team and points to home if logged in
-* Add things to settings view
-* Add table to standings view with latest gw and total points
+* Add transfer logic
+* Shift fpl data to ES
