@@ -1,6 +1,7 @@
 var express = require('express');
 var fs = require('fs');
 var router = express.Router();
+var dateFormat = require('dateformat');
 var elasticsearch = require('elasticsearch');
 var es = new elasticsearch.Client({
   host: 'localhost:9200'
@@ -11,6 +12,10 @@ router.all('/', function (req, res, next) {
     if (err) throw err;
     var body = JSON.parse(data);
     req.fixtures = body.next_event_fixtures;
+    for (var i = 0; i < req.fixtures.length; i++) {
+      req.fixtures[i].kickoff_time = new Date(req.fixtures[i].kickoff_time).toISOString();
+      req.fixtures[i].kickoff_time_formatted = dateFormat(new Date(req.fixtures[i].kickoff_time), "dd mmm HH:MM");
+    }
     next();
   });
 }, function (req, res, next) {

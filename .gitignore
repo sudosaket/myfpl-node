@@ -34,3 +34,5 @@ npm-debug.log.*
 # VS Code files
 jsconfig.json
 .vscode
+
+sense
