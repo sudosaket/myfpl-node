@@ -71,6 +71,6 @@ app.use(function (err, req, res, next) {
 });
 
 // start server
-app.listen(3000, function () {
+app.listen(80, function () {
     console.log('App started!');
 });
