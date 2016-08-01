@@ -33,7 +33,9 @@ router.all('/', function (req, res, next) {
       type: "team",
       id: req.session.user.username + "_" + req.app.locals.gw,
     }, function (error, response) {
-      req.my_team = response._source;
+      if (response.found) {
+        req.my_team = response._source;
+      }
       next();
     });
   } else {
