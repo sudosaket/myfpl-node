@@ -8,14 +8,13 @@
   "dependencies": {
     "body-parser": "~1.15.1",
     "cookie-parser": "~1.4.3",
-    "dateformat": "^1.0.12",
     "debug": "~2.2.0",
-    "ejs": "^2.5.1",
     "elasticsearch": "^11.0.1",
     "express": "~4.13.4",
     "express-session": "^1.14.0",
     "fs": "0.0.2",
     "jade": "^1.11.0",
+    "moment-timezone": "^0.5.5",
     "pug": "^2.0.0-beta4",
     "request": "^2.74.0"
   }

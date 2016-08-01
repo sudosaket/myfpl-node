@@ -1,7 +1,7 @@
 var express = require('express');
 var fs = require('fs');
 var router = express.Router();
-var dateFormat = require('dateformat');
+var moment = require('moment-timezone');
 var elasticsearch = require('elasticsearch');
 var es = new elasticsearch.Client({
   host: 'localhost:9200'
@@ -13,8 +13,8 @@ router.all('/', function (req, res, next) {
     var body = JSON.parse(data);
     req.fixtures = body.next_event_fixtures;
     for (var i = 0; i < req.fixtures.length; i++) {
-      req.fixtures[i].kickoff_time = new Date(req.fixtures[i].kickoff_time).toISOString();
-      req.fixtures[i].kickoff_time_formatted = dateFormat(new Date(req.fixtures[i].kickoff_time), "dd mmm HH:MM");
+      req.fixtures[i].kickoff_time = moment.tz(new Date(req.fixtures[i].kickoff_time), "Asia/Kolkata").format();
+      req.fixtures[i].kickoff_time_formatted = moment.tz(new Date(req.fixtures[i].kickoff_time), "Asia/Kolkata").format("D MMM HH:mm");
     }
     next();
   });
