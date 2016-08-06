@@ -29,8 +29,7 @@ app.use(function (req, res, next) {
 });
 
 // set local variables
-app.locals.gw = 1;
-// esGameUtils.advanceGamesweek(app.locals.gw);
+app.locals.gw = 0;
 
 // routing
 var index = require('./routes/index');

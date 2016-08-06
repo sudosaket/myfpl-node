@@ -132,35 +132,78 @@ exports.initMapping = initMapping;
 /**
  * Do a gameweek change
  */
-function advanceGamesweek(gw) {
-    es.search({
+function advanceGamesweek(req, res, callback) {
+    es.updateByQuery({
         index: "game",
-        type: "team",
+        type: "account",
         body: {
-            filter: {
-                term: {
-                    gw: gw
-                }
+            script: {
+                inline: "ctx._source.transfer_limit = 1"
             }
         }
     }, function (error, response) {
         if (error) throw error;
-        var teams = response.hits.hits;
-        for (var i = 0; i < teams.length; i++) {
-            for (var j = 0; j < teams.length; j++) {
-                teams[i]._source.players[j].score = 0;
+        es.search({
+            index: "game",
+            type: "team",
+            body: {
+                filter: {
+                    term: {
+                        gw: req.app.locals.gw
+                    }
+                }
             }
+        }, function (error, response) {
+            if (error) throw error;
+            var teams = response.hits.hits;
+            for (var i = 0; i < teams.length; i++) {
+                for (var j = 0; j < teams[i]._source.players.length; j++) {
+                    teams[i]._source.players[j].score = 0;
+                }
+            }
+            var done = 0;
+            for (let i = 0; i < teams.length; i++) {
+                es.index({
+                    index: "game",
+                    type: "team",
+                    id: teams[i]._source.account + "_" + (req.app.locals.gw + 1),
+                    body: teams[i]._source
+                }, function (error, response) {
+                    if (error) throw error;
+                    done += 1;
+                    if (done == teams.length) callback(req, res);
+                });
+            }
+        });
+    });
+}
+exports.advanceGamesweek = advanceGamesweek;
+
+function initTransferOrder(req, res, callback) {
+    es.search({
+        index: "game",
+        type: "account",
+        body: {
+            _source: ["username"]
         }
-        for (var i = 0; i < teams.length; i++) {
-            es.create({
+    }, function (error, response) {
+        if (error) throw error;
+        var done = 0;
+        var accounts = response.hits.hits;
+        for (let i = 0; i < accounts.length; i++) {
+            es.index({
                 index: "game",
-                type: "team",
-                id: teams[i]._source.account + "_" + (gw + 1),
-                body: teams[i]._source
+                type: "transfer_order",
+                id: accounts[i]._source.username,
+                body: {
+                    next: accounts[(i + 1) % accounts.length]._source.username
+                }
             }, function (error, response) {
                 if (error) throw error;
+                done += 1;
+                if (done == accounts.length) callback(req, res);
             });
         }
     });
 }
-exports.advanceGamesweek = advanceGamesweek;
+exports.initTransferOrder = initTransferOrder;

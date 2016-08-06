@@ -42,6 +42,16 @@ router.get('/transfers', function (req, res, next) {
         });
     }
 }, function (req, res, next) {
+    es.get({
+        index: "game",
+        type: "account",
+        id: req.session.user.username
+    }, function (error, response) {
+        req.session.user.transfer_limit = response._source.transfer_limit;
+        req.session.user.transfer_turn = response._source.transfer_turn;
+        next();
+    });
+}, function (req, res, next) {
     res.render('transfers', {
         title: "Transfers",
         currentRoute: "transfers",
@@ -100,7 +110,7 @@ router.post('/transfers', function (req, res, next) {
         req.previousPlayers = response._source.players;
         next();
     });
-}, function (req, res, err) {
+}, function (req, res, next) {
     var previousPlayers = req.previousPlayers;
     var playerIn = +req.body.playerIn;
     var playerOut = (req.body.playerOut != undefined) ? +req.body.playerOut : -1;
@@ -139,7 +149,36 @@ router.post('/transfers', function (req, res, next) {
         }
     }, function (error, response) {
         if (error) throw error;
-        res.redirect('transfers');
+        next();
+    });
+}, function (req, res, next) {
+    es.update({
+        index: "game",
+        type: "account",
+        id: req.session.user.username,
+        body: {
+            script: "ctx._source.transfer_limit -= 1; ctx._source.transfer_turn = false"
+        }
+    }, function (error, response) {
+        if (error) throw error;
+        es.get({
+            index: "game",
+            type: "transfer_order",
+            id: req.session.user.username
+        }, function (error, response) {
+            es.update({
+                index: "game",
+                type: "account",
+                id: response._source.next,
+                body: {
+                    script: "ctx._source.transfer_turn = true"
+                }
+            }, function (error, response) {
+                req.session.user.transfer_limit -= 1;
+                req.session.user.transfer_turn = false;
+                res.redirect('transfers');
+            })
+        });
     });
 });
 

@@ -70,6 +70,8 @@ router.route('/signup')
 							"name": req.body.inputFullName,
 							"password": req.body.inputPassword,
 							"team_name": req.body.inputTeamName,
+							"transfer_turn": false,
+							"transfer_limit": 11
 						};
 						es.create({
 							index: "game",
