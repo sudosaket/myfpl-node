@@ -3,8 +3,9 @@ var express = require('express');
 var path = require('path');
 var request = require('request');
 var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser')
-var session = require('express-session')
+var bodyParser = require('body-parser');
+var session = require('express-session');
+var esGameUtils = require('./esGameUtils');
 
 var app = express();
 
@@ -18,7 +19,7 @@ app.use(express.static(path.join(__dirname, 'bower_components')));
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(session({
-    secret: 'baby doll',
+    secret: 'baby doll xyz',
     resave: false,
     saveUninitialized: true
 }));
@@ -29,14 +30,23 @@ app.use(function (req, res, next) {
 
 // set local variables
 app.locals.gw = 1;
+// esGameUtils.advanceGamesweek(app.locals.gw);
 
 // routing
 var index = require('./routes/index');
+var transfers = require('./routes/transfers');
+var standings = require('./routes/standings');
 var auth = require('./routes/auth');
-var es = require('./routes/es');
+var data = require('./routes/data');
+// var api = require('./routes/api');
 app.use('/', index);
+app.use('/', transfers);
+app.use('/', standings);
 app.use('/', auth);
-app.use('/es', es);
+app.use('/data', data);
+// app.use('/api', api);
+
+esGameUtils.initIndex().then(esGameUtils.initMapping);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

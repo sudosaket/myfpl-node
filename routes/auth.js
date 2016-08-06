@@ -17,6 +17,7 @@ router.route('/login')
 		}, function (error, response) {
 			if (response.found && response._source.password === req.body.inputPassword) {
 				req.session.user = response._source;
+				delete req.session.user.password;
 				req.session.loggedIn = true;
 				if (req.query.next) {
 					res.redirect(req.query.next);
@@ -60,27 +61,30 @@ router.route('/signup')
 						}
 					}
 				}, function (error, response) {
-					if (response.count>0) {
+					if (response.count > 0) {
 						res.redirect('/signup?err=email');
 					} else {
+						var body = {
+							"email": req.body.inputEmail,
+							"username": req.body.inputUsername,
+							"name": req.body.inputFullName,
+							"password": req.body.inputPassword,
+							"team_name": req.body.inputTeamName,
+						};
 						es.create({
 							index: "game",
 							type: "account",
 							id: req.body.inputUsername,
-							body: {
-								email: req.body.inputEmail,
-								username: req.body.inputUsername,
-								name: req.body.inputFullName,
-								password: req.body.inputPassword,
-								team_name: req.body.inputTeamName,
-							}
+							body: body
 						}, function (error, response) {
+							if (error) throw error;
 							es.get({
 								index: "game",
 								type: "account",
-								id: response._id
+								id: req.body.inputUsername
 							}, function (error, response) {
 								req.session.user = response._source;
+								delete req.session.user.password;
 								req.session.loggedIn = true;
 								res.redirect('/');
 							});
@@ -122,16 +126,16 @@ router.route('/settings')
 					doc: doc
 				}
 			}, function (error, response) {
-				if (error) throw error;
 				es.get({
 					index: "game",
 					type: "account",
 					id: response._id
 				}, function (error, response) {
 					req.session.user = response._source;
+					delete req.session.user.password;
 					req.session.loggedIn = true;
-					res.redirect('settings?done=true')
-				});
+					res.redirect('settings?done=true');
+				})
 			});
 		} else {
 			res.redirect('login?next=settings');

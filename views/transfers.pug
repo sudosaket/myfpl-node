@@ -1,14 +1,10 @@
 extends layout
 
 block scripts
-  link(href='stylesheets/index.css', rel='stylesheet')
+  link(href='stylesheets/transfers.css', rel='stylesheet')
 
 block content
-  div.welcome
-    if session.loggedIn
-      h1 Welcome #{session.user.name}!
-    else
-      h1 Welcome!
+  div.welcome: h1 Transfers
   if session.loggedIn
     if myTeam
       table.table.table-bordered
@@ -28,6 +24,23 @@ block content
               td.col-md-2: span.badge-25(class=teams[players[player.id-1].team-1].short_name)
               td.col-md-2= players[player.id-1].element_type
               td.col-md-2= player.score
+    if transferTurn
+      div
+        form.form-inline(method="post")
+          div.form-group
+            label(for='playerIn') Player In
+            select#playerIn.form-control(name='playerIn')
+              option(value='', selected, disabled) Please select
+              for player in players
+                option(value= player.id-1)= player.web_name
+          div.form-group
+            if myTeam
+              label(for='playerOut') Player Out
+              select#playerOut.form-control(name='playerOut')
+                option(value='', selected, disabled) Please select
+                for player in myTeam.players
+                  option(value= player.id-1)= players[player.id-1].web_name
+          button.btn.btn-primary(type='submit', action='transfers') Make Transfer
   table.table.table-bordered
     caption Fixtures
     tbody
@@ -38,4 +51,3 @@ block content
           td.col-md-2= fixture.kickoff_time_formatted
           td.col-md-1: span.badge-25(class=teams[fixture.team_a-1].short_name)
           td.col-md-4= teams[fixture.team_a-1].name
-      
