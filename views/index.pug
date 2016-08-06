@@ -10,23 +10,24 @@ block content
     else
       h1 Welcome!
   if session.loggedIn
-    table.table.table-bordered
-      caption Current Points
-      thead
-        tr
-          th Player
-          th Team
-          th Team Logo
-          th Player Type
-          th Score
-      tbody
-        for player in my_team.players
+    if myTeam
+      table.table.table-bordered
+        caption Current Points
+        thead
           tr
-            td.col-md-3= players[player.id-1].web_name
-            td.col-md-3= teams[players[player.id-1].team-1].name
-            td.col-md-2: span.badge-25(class=teams[players[player.id-1].team-1].short_name)
-            td.col-md-2= players[player.id-1].element_type
-            td.col-md-2= player.score
+            th Player
+            th Team
+            th Team Logo
+            th Player Type
+            th Score
+        tbody
+          for player in myTeam.players
+            tr
+              td.col-md-3= players[player.id-1].web_name
+              td.col-md-3= teams[players[player.id-1].team-1].name
+              td.col-md-2: span.badge-25(class=teams[players[player.id-1].team-1].short_name)
+              td.col-md-2= players[player.id-1].element_type
+              td.col-md-2= player.score
   table.table.table-bordered
     caption Fixtures
     tbody
