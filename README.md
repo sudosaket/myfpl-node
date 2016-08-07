@@ -10,5 +10,4 @@ This is an attempt to truly make it a game.
 
 # Things to do
 
-* Add transfer logic
 * Shift fpl data to ES
