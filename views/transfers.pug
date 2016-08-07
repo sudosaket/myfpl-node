@@ -30,14 +30,14 @@ block content
           form.form-inline(method="post")
             div.form-group
               label(for='playerIn') Player In
-              select#playerIn.form-control(name='playerIn')
+              select#playerIn.form-control(name='playerIn', required)
                 option(value='', selected, disabled) Please select
                 for player in players
                   option(value= player.id-1)= player.web_name
             div.form-group
               if myTeam
                 label(for='playerOut') Player Out
-                select#playerOut.form-control(name='playerOut')
+                select#playerOut.form-control(name='playerOut', required)
                   option(value='', selected, disabled) Please select
                   for player in myTeam.players
                     option(value= player.id-1)= players[player.id-1].web_name
