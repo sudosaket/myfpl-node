@@ -33,14 +33,17 @@ block content
               select#playerIn.form-control(name='playerIn', required)
                 option(value='', selected, disabled) Please select
                 for player in players
-                  option(value= player.id-1)= player.web_name
+                  if player.is_available == false
+                    option(value= player.id-1, disabled)= player.web_name
+                  else if true
+                    option(value= player.id-1)= player.web_name
             div.form-group
               if myTeam
                 label(for='playerOut') Player Out
-                select#playerOut.form-control(name='playerOut', required)
+                select#playerOut.form-control(name='playerOut')
                   option(value='', selected, disabled) Please select
                   for player in myTeam.players
-                    option(value= player.id-1)= players[player.id-1].web_name
+                    option(value= player.id)= players[player.id].web_name
             button.btn.btn-primary(type='submit', action='transfers') Make Transfer
   table.table.table-bordered
     caption Fixtures
