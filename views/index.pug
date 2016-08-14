@@ -23,10 +23,10 @@ block content
         tbody
           for player in myTeam.players
             tr
-              td.col-md-3= players[player.id-1].web_name
-              td.col-md-3= teams[players[player.id-1].team-1].name
-              td.col-md-2: span.badge-25(class=teams[players[player.id-1].team-1].short_name)
-              td.col-md-2= players[player.id-1].element_type
+              td.col-md-3= players[player.id].web_name
+              td.col-md-3= teams[players[player.id].team-1].name
+              td.col-md-2: span.badge-25(class=teams[players[player.id].team-1].short_name)
+              td.col-md-2= players[player.id].element_type
               td.col-md-2= player.score
   table.table.table-bordered
     caption Fixtures

@@ -41,6 +41,23 @@ function getDynamicDataFromFpl(req, res, callback) {
 }
 exports.getDynamicDataFromFpl = getDynamicDataFromFpl;
 
+function getFixturesDataFromFpl(req, res, callback) {
+    request.get({ url: 'https://fantasy.premierleague.com/drf/event/' + req.app.locals.gw + '/live', json: true }, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            fs.writeFile('public/fplCurrentFixtures.json', JSON.stringify(body, null, 2), function (err) {
+                if (err) {
+                    return console.log(err);
+                }
+                console.log("New fixture data saved!");
+                callback(req, res);
+            });
+        } else {
+            throw error;
+        }
+    });
+}
+exports.getFixturesDataFromFpl = getFixturesDataFromFpl;
+
 function updatePlayerData(req, res, callback) {
     fs.readFile('fplStaticData.json', 'utf8', function (err, data) {
         if (err) throw err;

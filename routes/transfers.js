@@ -7,8 +7,8 @@ var es = new elasticsearch.Client({
     host: 'localhost:9200'
 });
 
-router.get('/transfers', function(req, res, next) {
-    fs.readFile('public/fplDynamicData.json', 'utf8', function(err, data) {
+router.get('/transfers', function (req, res, next) {
+    fs.readFile('public/fplDynamicData.json', 'utf8', function (err, data) {
         if (err) throw err;
         var body = JSON.parse(data);
         req.fixtures = body.next_event_fixtures;
@@ -18,27 +18,27 @@ router.get('/transfers', function(req, res, next) {
         }
         next();
     });
-}, function(req, res, next) {
-    fs.readFile('public/fplStaticData.json', 'utf8', function(err, data) {
+}, function (req, res, next) {
+    fs.readFile('public/fplStaticData.json', 'utf8', function (err, data) {
         if (err) throw err;
         var body = JSON.parse(data);
         req.teams = body.teams;
         req.players = body.elements;
         next();
     });
-}, function(req, res, next) {
+}, function (req, res, next) {
     es.search({
         index: "game",
         type: "player"
-    }, function(error, response) {
-        response.hits.hits.forEach(function(element) {
+    }, function (error, response) {
+        response.hits.hits.forEach(function (element) {
             if (!element._source.is_available) {
                 req.players[element._id].is_available = false;
             }
         }, this);
         next();
     });
-}, function(req, res, next) {
+}, function (req, res, next) {
     if (req.session.loggedIn !== true) {
         res.redirect('/login?next=transfers');
     } else {
@@ -46,24 +46,24 @@ router.get('/transfers', function(req, res, next) {
             index: "game",
             type: "team",
             id: req.session.user.username + "_" + (req.app.locals.gw + 1)
-        }, function(error, response) {
+        }, function (error, response) {
             if (response.found) {
                 req.myTeam = response._source;
             }
             next();
         });
     }
-}, function(req, res, next) {
+}, function (req, res, next) {
     es.get({
         index: "game",
         type: "account",
         id: req.session.user.username
-    }, function(error, response) {
+    }, function (error, response) {
         req.session.user.transfer_limit = response._source.transfer_limit;
         req.session.user.transfer_turn = response._source.transfer_turn;
         next();
     });
-}, function(req, res, next) {
+}, function (req, res, next) {
     res.render('transfers', {
         title: "Transfers",
         currentRoute: "transfers",
@@ -76,13 +76,13 @@ router.get('/transfers', function(req, res, next) {
     });
 });
 
-router.post('/transfers', function(req, res, next) {
+router.post('/transfers', function (req, res, next) {
     if (req.session.loggedIn !== true) {
         res.redirect('/login?next=transfers');
     } else {
         next();
     }
-}, function(req, res, next) {
+}, function (req, res, next) {
     var playerIn = +req.body.playerIn;
     var playerOut = (req.body.playerOut != undefined) ? +req.body.playerOut : -1;
     var gw = req.app.locals.gw;
@@ -108,20 +108,20 @@ router.post('/transfers', function(req, res, next) {
                 players: []
             }
         }
-    }, function(error, response) {
+    }, function (error, response) {
         if (error) throw error;
         next();
     });
-}, function(req, res, next) {
+}, function (req, res, next) {
     es.get({
         index: "game",
         type: "team",
         id: req.session.user.username + "_" + (req.app.locals.gw + 1)
-    }, function(error, response) {
+    }, function (error, response) {
         if (response.found) req.currentPlayers = response._source.players; else req.currentPlayers = [];
         next();
     });
-}, function(req, res, next) {
+}, function (req, res, next) {
     var currentPlayers = req.currentPlayers;
     var playerIn = +req.body.playerIn;
     var playerOut = (req.body.playerOut != undefined) ? +req.body.playerOut : -1;
@@ -150,11 +150,11 @@ router.post('/transfers', function(req, res, next) {
                 transfers: []
             }
         }
-    }, function(error, response) {
+    }, function (error, response) {
         if (error) throw error;
         next();
     });
-}, function(req, res, next) {
+}, function (req, res, next) {
     es.index({
         index: "game",
         type: "player",
@@ -162,10 +162,10 @@ router.post('/transfers', function(req, res, next) {
         body: {
             is_available: false
         }
-    }, function(error, response) {
+    }, function (error, response) {
         next();
     });
-}, function(req, res, next) {
+}, function (req, res, next) {
     if (req.body.playerOut != undefined) {
         es.index({
             index: "game",
@@ -174,13 +174,13 @@ router.post('/transfers', function(req, res, next) {
             body: {
                 is_available: true
             }
-        }, function(error, response) {
+        }, function (error, response) {
             next();
         });
     } else {
         next();
     }
-}, function(req, res, next) {
+}, function (req, res, next) {
     es.update({
         index: "game",
         type: "account",
@@ -188,13 +188,32 @@ router.post('/transfers', function(req, res, next) {
         body: {
             script: "ctx._source.transfer_limit -= 1; ctx._source.transfer_turn = false"
         }
-    }, function(error, response) {
+    }, function (error, response) {
         if (error) throw error;
         es.get({
             index: "game",
             type: "transfer_order",
             id: req.session.user.username
-        }, function(error, response) {
+        }, function (error, response) {
+            req.next_user = response._source.next;
+            next();
+        });
+    });
+}, function (req, res, next) {
+    es.get({
+        index: "game",
+        type: "transfer_order",
+        id: req.next_user
+    }, function (error, response) {
+        if (response._source.started) {
+            es.update({
+                index: "game",
+                type: "transfer_order",
+                id: req.next_user,
+                body: {
+                    script: "ctx._source.started = false"
+                }
+            });
             es.update({
                 index: "game",
                 type: "account",
@@ -202,13 +221,34 @@ router.post('/transfers', function(req, res, next) {
                 body: {
                     script: "ctx._source.transfer_turn = true"
                 }
-            }, function(error, response) {
+            });
+            es.update({
+                index: "game",
+                type: "transfer_order",
+                id: response._source.next,
+                body: {
+                    script: "ctx._source.started = true"
+                }
+            }, function (error, response) {
                 req.session.user.transfer_limit -= 1;
                 req.session.user.transfer_turn = false;
                 res.redirect('transfers');
-            })
-        });
-    });
+            });
+        } else {
+            es.update({
+                index: "game",
+                type: "account",
+                id: req.next_user,
+                body: {
+                    script: "ctx._source.transfer_turn = true"
+                }
+            }, function (error, response) {
+                req.session.user.transfer_limit -= 1;
+                req.session.user.transfer_turn = false;
+                res.redirect('transfers');
+            });
+        }
+    })
 });
 
 module.exports = router;

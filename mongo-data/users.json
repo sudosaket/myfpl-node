@@ -1,0 +1,21 @@
+{
+    "username": "saket",
+    "name": "Saket Mehta",
+    "teamName": "Rocket",
+    "transferLimit": 11,
+    "transferTurn": true
+}
+{
+    "username": "sanjog",
+    "name": "Sanjog Patidar",
+    "teamName": "Babydoll",
+    "transferLimit": 11,
+    "transferTurn": false
+}
+{
+    "username": "ban",
+    "name": "Banmanlang",
+    "teamName": "Sweet Pea",
+    "transferLimit": 11,
+    "transferTurn": false
+}

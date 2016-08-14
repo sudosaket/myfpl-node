@@ -29,7 +29,7 @@ app.use(function (req, res, next) {
 });
 
 // set local variables
-app.locals.gw = 0;
+app.locals.gw = 1;
 
 // routing
 var index = require('./routes/index');
@@ -37,7 +37,9 @@ var transfers = require('./routes/transfers');
 var standings = require('./routes/standings');
 var auth = require('./routes/auth');
 var data = require('./routes/data');
+var admin = require('./routes/admin');
 // var api = require('./routes/api');
+app.use('/admin', admin);
 app.use('/', index);
 app.use('/', transfers);
 app.use('/', standings);
