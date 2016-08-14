@@ -1,0 +1,30 @@
+{
+    "_id": "saket",
+    "email": "saket.m17@outlook.com",
+    "username": "saket",
+    "name": "Saket Mehta",
+    "password": "saket",
+    "team_name": "Rocket",
+    "transfer_turn": false,
+    "transfer_limit": 11
+}
+{
+    "_id": "sanjog",
+    "email": "sanjogpo3@gmail.com",
+    "username": "sanjog",
+    "name": "Sanjog Patidar",
+    "password": "sanjog",
+    "team_name": "Babydoll",
+    "transfer_turn": false,
+    "transfer_limit": 11
+}
+{
+    "_id": "ban",
+    "email": "bwlyndem@gmail.com",
+    "username": "ban",
+    "name": "Banmanlang",
+    "password": "ban",
+    "team_name": "Sweet Pea",
+    "transfer_turn": false,
+    "transfer_limit": 11
+}

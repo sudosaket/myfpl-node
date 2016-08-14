@@ -7,7 +7,3 @@ But they were developers. They were engineers. They were lazy. There had to be b
 And so, this is an attempt to take those painstakingly boring tasks (which were so unfun they defeated the purpose of the game) out of the game.
 
 This is an attempt to truly make it a game.
-
-# Things to do
-
-* Shift fpl data to ES

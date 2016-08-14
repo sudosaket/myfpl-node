@@ -8,22 +8,22 @@ var es = new elasticsearch.Client({
 });
 
 router.all('/', function (req, res, next) {
-    fs.readFile('public/fplDynamicData.json', 'utf8', function (err, data) {
-        if (err) throw err;
-        var body = JSON.parse(data);
-        req.fixtures = body.next_event_fixtures;
-        for (var i = 0; i < req.fixtures.length; i++) {
-            req.fixtures[i].kickoff_time = moment.tz(new Date(req.fixtures[i].kickoff_time), "Asia/Kolkata").format();
-            req.fixtures[i].kickoff_time_formatted = moment.tz(new Date(req.fixtures[i].kickoff_time), "Asia/Kolkata").format("D MMM HH:mm");
-        }
-        next();
-    });
-}, function (req, res, next) {
     fs.readFile('public/fplStaticData.json', 'utf8', function (err, data) {
         if (err) throw err;
         var body = JSON.parse(data);
         req.teams = body.teams;
         req.players = body.elements;
+        next();
+    });
+}, function (req, res, next) {
+    fs.readFile('public/fplCurrentFixtures.json', 'utf8', function (err, data) {
+        if (err) throw err;
+        var body = JSON.parse(data);
+        req.fixtures = body.fixtures;
+        for (var i = 0; i < req.fixtures.length; i++) {
+            req.fixtures[i].kickoff_time = moment.tz(new Date(req.fixtures[i].kickoff_time), "Asia/Kolkata").format();
+            req.fixtures[i].kickoff_time_formatted = moment.tz(new Date(req.fixtures[i].kickoff_time), "Asia/Kolkata").format("D MMM HH:mm");
+        }
         next();
     });
 }, function (req, res, next) {
