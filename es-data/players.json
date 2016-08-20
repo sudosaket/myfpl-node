@@ -1,299 +1,36 @@
-[
-    {
-        "_index": "game",
-        "_type": "player",
-        "_id": "227",
-        "_score": 1,
-        "_source": {
-            "is_available": false
-        }
-    },
-    {
-        "_index": "game",
-        "_type": "player",
-        "_id": "383",
-        "_score": 1,
-        "_source": {
-            "is_available": false
-        }
-    },
-    {
-        "_index": "game",
-        "_type": "player",
-        "_id": "24",
-        "_score": 1,
-        "_source": {
-            "is_available": false
-        }
-    },
-    {
-        "_index": "game",
-        "_type": "player",
-        "_id": "397",
-        "_score": 1,
-        "_source": {
-            "is_available": false
-        }
-    },
-    {
-        "_index": "game",
-        "_type": "player",
-        "_id": "229",
-        "_score": 1,
-        "_source": {
-            "is_available": false
-        }
-    },
-    {
-        "_index": "game",
-        "_type": "player",
-        "_id": "460",
-        "_score": 1,
-        "_source": {
-            "is_available": false
-        }
-    },
-    {
-        "_index": "game",
-        "_type": "player",
-        "_id": "208",
-        "_score": 1,
-        "_source": {
-            "is_available": false
-        }
-    },
-    {
-        "_index": "game",
-        "_type": "player",
-        "_id": "183",
-        "_score": 1,
-        "_source": {
-            "is_available": false
-        }
-    },
-    {
-        "_index": "game",
-        "_type": "player",
-        "_id": "238",
-        "_score": 1,
-        "_source": {
-            "is_available": false
-        }
-    },
-    {
-        "_index": "game",
-        "_type": "player",
-        "_id": "402",
-        "_score": 1,
-        "_source": {
-            "is_available": false
-        }
-    },
-    {
-        "_index": "game",
-        "_type": "player",
-        "_id": "367",
-        "_score": 1,
-        "_source": {
-            "is_available": false
-        }
-    },
-    {
-        "_index": "game",
-        "_type": "player",
-        "_id": "96",
-        "_score": 1,
-        "_source": {
-            "is_available": false
-        }
-    },
-    {
-        "_index": "game",
-        "_type": "player",
-        "_id": "127",
-        "_score": 1,
-        "_source": {
-            "is_available": false
-        }
-    },
-    {
-        "_index": "game",
-        "_type": "player",
-        "_id": "142",
-        "_score": 1,
-        "_source": {
-            "is_available": false
-        }
-    },
-    {
-        "_index": "game",
-        "_type": "player",
-        "_id": "5",
-        "_score": 1,
-        "_source": {
-            "is_available": false
-        }
-    },
-    {
-        "_index": "game",
-        "_type": "player",
-        "_id": "191",
-        "_score": 1,
-        "_source": {
-            "is_available": false
-        }
-    },
-    {
-        "_index": "game",
-        "_type": "player",
-        "_id": "175",
-        "_score": 1,
-        "_source": {
-            "is_available": false
-        }
-    },
-    {
-        "_index": "game",
-        "_type": "player",
-        "_id": "393",
-        "_score": 1,
-        "_source": {
-            "is_available": false
-        }
-    },
-    {
-        "_index": "game",
-        "_type": "player",
-        "_id": "211",
-        "_score": 1,
-        "_source": {
-            "is_available": false
-        }
-    },
-    {
-        "_index": "game",
-        "_type": "player",
-        "_id": "381",
-        "_score": 1,
-        "_source": {
-            "is_available": false
-        }
-    },
-    {
-        "_index": "game",
-        "_type": "player",
-        "_id": "271",
-        "_score": 1,
-        "_source": {
-            "is_available": false
-        }
-    },
-    {
-        "_index": "game",
-        "_type": "player",
-        "_id": "266",
-        "_score": 1,
-        "_source": {
-            "is_available": false
-        }
-    },
-    {
-        "_index": "game",
-        "_type": "player",
-        "_id": "81",
-        "_score": 1,
-        "_source": {
-            "is_available": false
-        }
-    },
-    {
-        "_index": "game",
-        "_type": "player",
-        "_id": "124",
-        "_score": 1,
-        "_source": {
-            "is_available": false
-        }
-    },
-    {
-        "_index": "game",
-        "_type": "player",
-        "_id": "72",
-        "_score": 1,
-        "_source": {
-            "is_available": false
-        }
-    },
-    {
-        "_index": "game",
-        "_type": "player",
-        "_id": "125",
-        "_score": 1,
-        "_source": {
-            "is_available": false
-        }
-    },
-    {
-        "_index": "game",
-        "_type": "player",
-        "_id": "1",
-        "_score": 1,
-        "_source": {
-            "is_available": false
-        }
-    },
-    {
-        "_index": "game",
-        "_type": "player",
-        "_id": "267",
-        "_score": 1,
-        "_source": {
-            "is_available": false
-        }
-    },
-    {
-        "_index": "game",
-        "_type": "player",
-        "_id": "11",
-        "_score": 1,
-        "_source": {
-            "is_available": false
-        }
-    },
-    {
-        "_index": "game",
-        "_type": "player",
-        "_id": "241",
-        "_score": 1,
-        "_source": {
-            "is_available": false
-        }
-    },
-    {
-        "_index": "game",
-        "_type": "player",
-        "_id": "246",
-        "_score": 1,
-        "_source": {
-            "is_available": false
-        }
-    },
-    {
-        "_index": "game",
-        "_type": "player",
-        "_id": "76",
-        "_score": 1,
-        "_source": {
-            "is_available": false
-        }
-    },
-    {
-        "_index": "game",
-        "_type": "player",
-        "_id": "167",
-        "_score": 1,
-        "_source": {
-            "is_available": false
-        }
-    }
-]
+{"_index":"game","_type":"player","_id":"397","_score":1,"_source":{"is_available":true}}
+{"_index":"game","_type":"player","_id":"227","_score":1,"_source":{"is_available":false}}
+{"_index":"game","_type":"player","_id":"383","_score":1,"_source":{"is_available":false}}
+{"_index":"game","_type":"player","_id":"24","_score":1,"_source":{"is_available":false}}
+{"_index":"game","_type":"player","_id":"229","_score":1,"_source":{"is_available":false}}
+{"_index":"game","_type":"player","_id":"460","_score":1,"_source":{"is_available":false}}
+{"_index":"game","_type":"player","_id":"208","_score":1,"_source":{"is_available":false}}
+{"_index":"game","_type":"player","_id":"183","_score":1,"_source":{"is_available":false}}
+{"_index":"game","_type":"player","_id":"367","_score":1,"_source":{"is_available":true}}
+{"_index":"game","_type":"player","_id":"402","_score":1,"_source":{"is_available":false}}
+{"_index":"game","_type":"player","_id":"127","_score":1,"_source":{"is_available":false}}
+{"_index":"game","_type":"player","_id":"142","_score":1,"_source":{"is_available":false}}
+{"_index":"game","_type":"player","_id":"5","_score":1,"_source":{"is_available":false}}
+{"_index":"game","_type":"player","_id":"191","_score":1,"_source":{"is_available":false}}
+{"_index":"game","_type":"player","_id":"96","_score":1,"_source":{"is_available":false}}
+{"_index":"game","_type":"player","_id":"238","_score":1,"_source":{"is_available":false}}
+{"_index":"game","_type":"player","_id":"175","_score":1,"_source":{"is_available":false}}
+{"_index":"game","_type":"player","_id":"393","_score":1,"_source":{"is_available":false}}
+{"_index":"game","_type":"player","_id":"211","_score":1,"_source":{"is_available":false}}
+{"_index":"game","_type":"player","_id":"381","_score":1,"_source":{"is_available":false}}
+{"_index":"game","_type":"player","_id":"125","_score":1,"_source":{"is_available":true}}
+{"_index":"game","_type":"player","_id":"1","_score":1,"_source":{"is_available":false}}
+{"_index":"game","_type":"player","_id":"124","_score":1,"_source":{"is_available":false}}
+{"_index":"game","_type":"player","_id":"81","_score":1,"_source":{"is_available":false}}
+{"_index":"game","_type":"player","_id":"266","_score":1,"_source":{"is_available":false}}
+{"_index":"game","_type":"player","_id":"271","_score":1,"_source":{"is_available":false}}
+{"_index":"game","_type":"player","_id":"72","_score":1,"_source":{"is_available":false}}
+{"_index":"game","_type":"player","_id":"75","_score":1,"_source":{"is_available":false}}
+{"_index":"game","_type":"player","_id":"502","_score":1,"_source":{"is_available":false}}
+{"_index":"game","_type":"player","_id":"234","_score":1,"_source":{"is_available":false}}
+{"_index":"game","_type":"player","_id":"267","_score":1,"_source":{"is_available":false}}
+{"_index":"game","_type":"player","_id":"11","_score":1,"_source":{"is_available":false}}
+{"_index":"game","_type":"player","_id":"241","_score":1,"_source":{"is_available":false}}
+{"_index":"game","_type":"player","_id":"246","_score":1,"_source":{"is_available":false}}
+{"_index":"game","_type":"player","_id":"76","_score":1,"_source":{"is_available":false}}
+{"_index":"game","_type":"player","_id":"167","_score":1,"_source":{"is_available":false}}

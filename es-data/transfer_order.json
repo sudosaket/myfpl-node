@@ -1,12 +1,3 @@
-{
-    "_id": "saket",
-    "next": "sanjog"
-}
-{
-    "_id": "sanjog",
-    "next": "ban"
-}
-{
-    "_id": "ban",
-    "next": "saket"
-}
+{"_index":"game","_type":"transfer_order","_id":"saket","_score":1,"_source":{"next":"sanjog","started":false,"transfer_turn":false}}
+{"_index":"game","_type":"transfer_order","_id":"sanjog","_score":1,"_source":{"next":"ban","started":false,"transfer_turn":false}}
+{"_index":"game","_type":"transfer_order","_id":"ban","_score":1,"_source":{"next":"saket","started":true,"transfer_turn":true}}
