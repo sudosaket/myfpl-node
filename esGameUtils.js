@@ -133,6 +133,7 @@ exports.initMapping = initMapping;
  * Do a gameweek change
  */
 function advanceGamesweek(req, res, callback) {
+
     es.updateByQuery({
         index: "game",
         type: "account",
@@ -160,6 +161,7 @@ function advanceGamesweek(req, res, callback) {
                 for (var j = 0; j < teams[i]._source.players.length; j++) {
                     teams[i]._source.players[j].score = 0;
                 }
+                teams[i]._source.gw = req.app.locals.gw + 1;
             }
             var done = 0;
             for (let i = 0; i < teams.length; i++) {
