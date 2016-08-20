@@ -29,7 +29,7 @@ app.use(function (req, res, next) {
 });
 
 // set local variables
-app.locals.gw = 1;
+app.locals.gw = 2;
 
 // routing
 var index = require('./routes/index');
