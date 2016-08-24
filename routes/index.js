@@ -2,10 +2,9 @@ var express = require('express');
 var fs = require('fs');
 var router = express.Router();
 var moment = require('moment-timezone');
-var elasticsearch = require('elasticsearch');
-var es = new elasticsearch.Client({
-    host: 'localhost:9200'
-});
+var fplUtils = require('../fplUtils');
+var mongoose = require('mongoose');
+var Team = require('../models/Team');
 
 router.all('/', function (req, res, next) {
     fs.readFile('public/fplStaticData.json', 'utf8', function (err, data) {
@@ -13,6 +12,7 @@ router.all('/', function (req, res, next) {
         var body = JSON.parse(data);
         req.teams = body.teams;
         req.players = body.elements;
+        req.elementType = body.element_types;
         next();
     });
 }, function (req, res, next) {
@@ -28,14 +28,8 @@ router.all('/', function (req, res, next) {
     });
 }, function (req, res, next) {
     if (req.session.loggedIn) {
-        es.get({
-            index: "game",
-            type: "team",
-            id: req.session.user.username + "_" + req.app.locals.gw
-        }, function (error, response) {
-            if (response.found) {
-                req.myTeam = response._source;
-            }
+        Team.findOne({ username: req.session.user.username, event: req.app.locals.event }, function (err, team) {
+            req.myTeam = team;
             next();
         });
     } else {
@@ -45,10 +39,11 @@ router.all('/', function (req, res, next) {
     res.render('index', {
         title: 'Home',
         currentRoute: 'index',
-        fixtures: req.fixtures,
         teams: req.teams,
-        myTeam: req.myTeam,
-        players: req.players
+        players: req.players,
+        elementType: req.elementType,
+        fixtures: req.fixtures,
+        myTeam: req.myTeam
     });
 });
 

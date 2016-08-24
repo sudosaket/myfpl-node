@@ -1,48 +1,39 @@
 var express = require('express');
-var fs = require('fs');
 var router = express.Router();
-var moment = require('moment-timezone');
-var elasticsearch = require('elasticsearch');
-var es = new elasticsearch.Client({
-    host: 'localhost:9200'
-});
+var mongoose = require('mongoose');
+var Team = require('../models/Team');
+var Account = require('../models/Account');
 
 router.get('/standings', function (req, res, next) {
     if (req.session.loggedIn !== true) {
         res.redirect('/login?next=standings');
     } else {
-        es.search({
-            index: "game",
-            type: "team"
-        }, function (error, response) {
-            if (error) throw error;
-            var data = new Map();
-            response.hits.hits.forEach(function (element) {
-                var account = element._source.account;
-                var totalScore = 0;
-                element._source.players.forEach(function (player) {
-                    totalScore += player.score;
-                }, this);
-                if (data.has(account)) {
-                    data.set(account, data.get(account)+totalScore);
-                } else {
-                    data.set(account, totalScore);
+        Team.aggregate([
+            {
+                $group: {
+                    _id: '$username',
+                    totalPoints: { $sum: '$points' }
                 }
-            }, this);
-            req.teams = data;
+            },
+            {
+                $sort: { 'totalPoints': -1 }
+            }
+        ], function (err, result) {
+            req.teams = result;
             next();
         });
     }
 }, function (req, res, next) {
-    es.search({
-        index: "game",
-        type: "account",
-        body: {
-            _source: ["name", "username", "team_name"]
-        }
-    }, function (error, response) {
-        if (error) throw error;
-        res.render('standings', { title: 'Standings', currentRoute: 'standings', teams: req.teams, accounts: response.hits.hits });
+    Account.find().select('username name teamName').exec(function (err, accounts) {
+        req.teams.forEach(function(team, index, arr) {
+            for (var i = 0; i < accounts.length; i++) {
+                if (accounts[i].username === team._id) {
+                    arr[index].teamName = accounts[i].teamName;
+                    arr[index].name = accounts[i].name;
+                }
+            }
+        }, this);
+        res.render('standings', { title: 'Standings', currentRoute: 'standings', teams: req.teams, accounts: accounts });
     });
 });
 

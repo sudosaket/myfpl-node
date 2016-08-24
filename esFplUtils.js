@@ -1,11 +1,67 @@
 "use strict"
 var request = require('request');
 var fs = require('fs');
-var elasticsearch = require('elasticsearch');
 
-var client = new elasticsearch.Client({
-    host: 'localhost:9200'
-});
+exports.getBootstrapStatic = function () {
+    request.get({ url: FPL_URL + '/bootstrap-static', json: true }, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            return body;
+        } else {
+            throw error;
+        }
+    });
+}
+
+exports.getBootstrapDynamic = function() {
+    request.get({ url: FPL_URL + '/bootstrap-dynamic', json: true }, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            return body;
+        } else {
+            throw error;
+        }
+    });
+}
+
+exports.getElements = function () {
+    request.get({ url: FPL_URL + '/elements', json: true }, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            return body;
+        } else {
+            throw error;
+        }
+    });
+}
+
+exports.getFixtures = function (event) {
+    var query = (event) ? '?event=' + event : '';
+    request.get({ url: FPL_URL + '/fixtures/' + query, json: true }, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            return body;
+        } else {
+            throw error;
+        }
+    });
+}
+
+exports.getElementSummary = function (id) {
+    request.get({ url: FPL_URL + '/element-summary/' + id, json: true }, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            return body;
+        } else {
+            throw error;
+        }
+    });
+}
+
+exports.getEventLive = function (id) {
+    request.get({ url: FPL_URL + '/event/' + id + '/live', json: true }, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            return body;
+        } else {
+            throw error;
+        }
+    });
+}
 
 function getStaticDataFromFpl(req, res, callback) {
     request.get({ url: 'https://fantasy.premierleague.com/drf/bootstrap-static', json: true }, function (error, response, body) {
@@ -57,95 +113,3 @@ function getFixturesDataFromFpl(req, res, callback) {
     });
 }
 exports.getFixturesDataFromFpl = getFixturesDataFromFpl;
-
-function updatePlayerData(req, res, callback) {
-    fs.readFile('fplStaticData.json', 'utf8', function (err, data) {
-        if (err) throw err;
-        var body = JSON.parse(data);
-        var counter = 0;
-        for (let i = 0; i < body.elements.length; i++) {
-            client.index({
-                index: 'myfpl',
-                type: 'player',
-                id: body.elements[i].id,
-                body: body.elements[i]
-            }, function (error, response) {
-                console.log('# ' + (i + 1) + '. ' + body.elements[i].web_name + ' inserted!');
-                counter++;
-                if (counter == body.elements.length) {
-                    callback(req, res);
-                }
-            });
-        }
-    });
-}
-exports.updatePlayerData = updatePlayerData;
-
-function updateTeamData(req, res, callback) {
-    fs.readFile('fplStaticData.json', 'utf8', function (err, data) {
-        if (err) throw err;
-        var body = JSON.parse(data);
-        var counter = 0;
-        for (let i = 0; i < body.teams.length; i++) {
-            client.index({
-                index: 'myfpl',
-                type: 'team',
-                id: body.teams[i].id,
-                body: body.teams[i]
-            }, function (error, response) {
-                console.log('# ' + (i + 1) + '. ' + body.teams[i].name + ' updated!');
-                counter++;
-                if (counter == body.teams.length) {
-                    callback(req, res);
-                }
-            });
-        }
-    });
-}
-exports.updateTeamData = updateTeamData;
-
-function addPlayerTypesData(req, res, callback) {
-    fs.readFile('fplStaticData.json', 'utf8', function (err, data) {
-        if (err) throw err;
-        var body = JSON.parse(data);
-        var counter = 0;
-        for (let i = 0; i < body.element_types.length; i++) {
-            client.index({
-                index: 'myfpl',
-                type: 'player_type',
-                id: body.element_types[i].id,
-                body: body.element_types[i]
-            }, function (error, response) {
-                console.log('# ' + (i + 1) + '. Player type ' + body.element_types[i].singular_name + ' added!');
-                counter++;
-                if (counter == body.element_types.length) {
-                    callback(req, res);
-                }
-            });
-        }
-    });
-}
-exports.addPlayerTypesData = addPlayerTypesData;
-
-function updateGamesweekData(req, res, callback) {
-    fs.readFile('fplStaticData.json', 'utf8', function (err, data) {
-        if (err) throw err;
-        var body = JSON.parse(data);
-        var counter = 0;
-        for (let i = 0; i < body.events.length; i++) {
-            client.index({
-                index: 'myfpl',
-                type: 'gamesweek',
-                id: body.events[i].id,
-                body: body.events[i]
-            }, function (error, response) {
-                console.log('# ' + (i + 1) + '. ' + body.events[i].name + ' updated!');
-                counter++;
-                if (counter == body.events.length) {
-                    callback(req, res);
-                }
-            });
-        }
-    });
-}
-exports.updateGamesweekData = updateGamesweekData;
