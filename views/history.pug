@@ -1,0 +1,28 @@
+extends layout
+
+block scripts
+  link(href='/stylesheets/index.css', rel='stylesheet')
+
+block content
+  div.welcome
+    h1 #{account}'s history
+  if session.loggedIn
+    for team in history
+      table.table.table-bordered
+        caption Gamesweek #{team.event}
+        thead
+          tr
+            th Player
+            th Team
+            th Team Logo
+            th Position
+            th Score
+        tbody
+          for player in team.players
+            tr
+              td.col-md-3= elements[player].web_name
+              td.col-md-3= teams[elements[player].team-1].name
+              td.col-md-2: span.badge-25(class=teams[elements[player].team-1].short_name)
+              td.col-md-2= elementTypes[elements[player].element_type-1].singular_name_short
+              td.col-md-2= scores[team.event-1].elements[player+1].stats.total_points
+        

@@ -8,7 +8,6 @@ var session = require('express-session');
 var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/myFpl').then(()=>console.log("Connected to mongoDB!"));
-var esGameUtils = require('./esGameUtils');
 
 var app = express();
 
@@ -28,31 +27,27 @@ app.use(session({
 }));
 app.use(function (req, res, next) {
     res.locals.session = req.session;
-    req.db = mongoose;
     next();
 });
 
 // set local variables
-app.locals.gw = 2;
-app.locals.event = 2;
+app.locals.event = 3;
 
 // routing
 var index = require('./routes/index');
 var transfers = require('./routes/transfers');
 var standings = require('./routes/standings');
+var history = require('./routes/history');
 var auth = require('./routes/auth');
 var data = require('./routes/data');
-var admin = require('./routes/admin');
 var api = require('./routes/api');
-app.use('/admin', admin);
 app.use('/', index);
 app.use('/', transfers);
 app.use('/', standings);
+app.use('/', history);
 app.use('/', auth);
 app.use('/data', data);
 app.use('/api', api);
-
-esGameUtils.initIndex().then(esGameUtils.initMapping);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

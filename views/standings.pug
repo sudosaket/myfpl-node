@@ -8,7 +8,7 @@ block content
   table.table.table-bordered
     tbody
       mixin rows
-        td.col-md-4= team.teamName
+        td.col-md-4: a(href="/history/"+team._id) #{team.teamName}
         td.col-md-4= team.name
         td.col-md-4= team.totalPoints
       for team, index in teams
@@ -18,6 +18,6 @@ block content
         else if index == teams.length-1
           tr.danger
             +rows
-        else 
+        else if true
           tr.warning
             +rows

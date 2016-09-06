@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var request = require('request');
+var fs = require('fs');
 var mongoose = require('mongoose');
 var Account = require('../models/Account');
 var Player = require('../models/Player');
@@ -10,70 +11,7 @@ var TransferOrder = require('../models/TransferOrder');
 var FPL_URL = "https://fantasy.premierleague.com/drf";
 
 router.all('/', function (req, res) {
-    res.send('Welcome to the My FPL API!');
-});
-
-// FPL data endpoints
-
-router.get('/bootstrap-static', function (req, res) {
-    request.get({ url: FPL_URL + '/bootstrap-static', json: true }, function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            res.json(body);
-        } else {
-            throw error;
-        }
-    });
-});
-
-router.get('/bootstrap-dynamic', function (req, res) {
-    request.get({ url: FPL_URL + '/bootstrap-dynamic', json: true }, function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            res.json(body);
-        } else {
-            throw error;
-        }
-    });
-});
-
-router.get('/elements', function (req, res) {
-    request.get({ url: FPL_URL + '/elements', json: true }, function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            res.json(body);
-        } else {
-            throw error;
-        }
-    });
-});
-
-router.get('/fixtures', function (req, res) {
-    var query = (req.query.event) ? '?event=' + req.query.event : '';
-    request.get({ url: FPL_URL + '/fixtures/' + query, json: true }, function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            res.json(body);
-        } else {
-            throw error;
-        }
-    });
-});
-
-router.get('/element-summary/:id', function (req, res) {
-    request.get({ url: FPL_URL + '/element-summary/' + req.params.id, json: true }, function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            res.json(body);
-        } else {
-            throw error;
-        }
-    });
-});
-
-router.get('/event/:id/live', function (req, res) {
-    request.get({ url: FPL_URL + '/event/' + req.params.id + '/live', json: true }, function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            res.json(body);
-        } else {
-            throw error;
-        }
-    });
+    res.json({ message: 'Welcome to the My FPL API!' });
 });
 
 // Game data
@@ -123,7 +61,7 @@ router.get('/update-live-points', function (req, res) {
                         totalPoints += elements[player].event_points;
                     }, this);
                     team.points = totalPoints;
-                    team.save(function(err) {
+                    team.save(function (err) {
                         console.log("Updated totalPoints for " + team.username + "'s team to " + team.points);
                     });
                 }, this);
@@ -136,25 +74,20 @@ router.get('/update-live-points', function (req, res) {
 });
 
 router.get('/update-all-points', function (req, res) {
-    request.get({ url: FPL_URL + '/elements', json: true }, function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            var elements = body;
-            Team.find().exec(function (err, teams) {
-                teams.forEach(function (team) {
-                    var totalPoints = 0;
-                    team.players.forEach(function (player) {
-                        totalPoints += elements[player].event_points;
-                    }, this);
-                    team.points = totalPoints;
-                    team.save(function(err) {
-                        console.log("Updated totalPoints for " + team.username + "'s team to " + team.points);
-                    });
-                }, this);
-                res.send("Done!")
+    Team.find().exec(function (err, teams) {
+        teams.forEach(function (team) {
+            if (team.event === 0 || team.event === req.app.locals.event+1) return;
+            var elements = JSON.parse(fs.readFileSync('public/data/event/'+team.event+'.json', 'utf8'));
+            var totalPoints = 0;
+            team.players.forEach(function (player) {
+                totalPoints += elements.elements[player+1].stats.total_points;
+            }, this);
+            team.points = totalPoints;
+            team.save(function (err) {
+                console.log("Updated totalPoints for " + team.username + "'s team to " + team.points);
             });
-        } else {
-            throw error;
-        }
+        }, this);
+        res.send("Done!")
     });
 });
 

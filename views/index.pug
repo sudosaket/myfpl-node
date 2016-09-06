@@ -2,42 +2,40 @@ extends layout
 
 block scripts
   link(href='stylesheets/index.css', rel='stylesheet')
-  script(src='javascripts/app.js')
 
 block content
-  div(ng-app='myFpl', ng-controller='IndexCtrl')
-    div.welcome
-      if session.loggedIn
-        h1 Welcome #{session.user.name}!
-      else
-        h1 Welcome!
+  div.welcome
     if session.loggedIn
-      if myTeam
-        table.table.table-bordered
-          caption Current Points
-          thead
-            tr
-              th Player
-              th Team
-              th Team Logo
-              th Position
-              th Score
-          tbody
-            for player in myTeam.players
-              tr
-                td.col-md-3= players[player].web_name
-                td.col-md-3= teams[players[player].team-1].name
-                td.col-md-2: span.badge-25(class=teams[players[player].team-1].short_name)
-                td.col-md-2= elementType[players[player].element_type-1].singular_name_short
-                td.col-md-2= players[player].event_points
-    table.table.table-bordered
-      caption Fixtures
-      tbody
-        for fixture in fixtures 
+      h1 Welcome #{session.user.name}!
+    else
+      h1 Welcome!
+  if session.loggedIn
+    if myTeam
+      table.table.table-bordered
+        caption Current Points
+        thead
           tr
-            td.col-md-4= teams[fixture.team_h-1].name
-            td.col-md-1: span.badge-25(class=teams[fixture.team_h-1].short_name)
-            td.col-md-2= fixture.kickoff_time_formatted
-            td.col-md-1: span.badge-25(class=teams[fixture.team_a-1].short_name)
-            td.col-md-4= teams[fixture.team_a-1].name
+            th Player
+            th Team
+            th Team Logo
+            th Position
+            th Score
+        tbody
+          for player in myTeam.players
+            tr
+              td.col-md-3= elements[player].web_name
+              td.col-md-3= teams[elements[player].team-1].name
+              td.col-md-2: span.badge-25(class=teams[elements[player].team-1].short_name)
+              td.col-md-2= elementTypes[elements[player].element_type-1].singular_name_short
+              td.col-md-2= elements[player].event_points
+  table.table.table-bordered
+    caption Fixtures
+    tbody
+      for fixture in fixtures 
+        tr
+          td.col-md-4= teams[fixture.team_h-1].name
+          td.col-md-1: span.badge-25(class=teams[fixture.team_h-1].short_name)
+          td.col-md-2= fixture.kickoff_time_formatted
+          td.col-md-1: span.badge-25(class=teams[fixture.team_a-1].short_name)
+          td.col-md-4= teams[fixture.team_a-1].name
         

@@ -2,13 +2,13 @@ var express = require('express');
 var fs = require('fs');
 var router = express.Router();
 var moment = require('moment-timezone');
-var elasticsearch = require('elasticsearch');
-var es = new elasticsearch.Client({
-    host: 'localhost:9200'
-});
+var Account = require('../models/Account');
+var Player = require('../models/Player');
+var Team = require('../models/Team');
+var TransferOrder = require('../models/TransferOrder');
 
 router.get('/transfers', function (req, res, next) {
-    fs.readFile('public/fplDynamicData.json', 'utf8', function (err, data) {
+    fs.readFile('public/data/bootstrap-dynamic.json', 'utf8', function (err, data) {
         if (err) throw err;
         var body = JSON.parse(data);
         req.fixtures = body.next_event_fixtures;
@@ -19,21 +19,19 @@ router.get('/transfers', function (req, res, next) {
         next();
     });
 }, function (req, res, next) {
-    fs.readFile('public/fplStaticData.json', 'utf8', function (err, data) {
+    fs.readFile('public/data/bootstrap-static.json', 'utf8', function (err, data) {
         if (err) throw err;
         var body = JSON.parse(data);
         req.teams = body.teams;
         req.players = body.elements;
+        req.elementTypes = body.element_types;
         next();
     });
 }, function (req, res, next) {
-    es.search({
-        index: "game",
-        type: "player"
-    }, function (error, response) {
-        response.hits.hits.forEach(function (element) {
-            if (!element._source.is_available) {
-                req.players[element._id].is_available = false;
+    Player.find().exec(function (err, players) {
+        players.forEach(function (player) {
+            if (!player.isAvailable) {
+                req.players[player._id].is_available = false;
             }
         }, this);
         next();
@@ -42,25 +40,17 @@ router.get('/transfers', function (req, res, next) {
     if (req.session.loggedIn !== true) {
         res.redirect('/login?next=transfers');
     } else {
-        es.get({
-            index: "game",
-            type: "team",
-            id: req.session.user.username + "_" + (req.app.locals.gw + 1)
-        }, function (error, response) {
-            if (response.found) {
-                req.myTeam = response._source;
+        Team.findOne({ username: req.session.user.username, event: req.app.locals.event + 1 }, function (err, team) {
+            if (team) {
+                req.myTeam = team;
             }
             next();
         });
     }
 }, function (req, res, next) {
-    es.get({
-        index: "game",
-        type: "account",
-        id: req.session.user.username
-    }, function (error, response) {
-        req.session.user.transfer_limit = response._source.transfer_limit;
-        req.session.user.transfer_turn = response._source.transfer_turn;
+    Account.findOne({ username: req.session.user.username }, function (err, account) {
+        req.session.user.transferLimit = account.transferLimit;
+        req.session.user.transferTurn = account.transferTurn;
         next();
     });
 }, function (req, res, next) {
@@ -68,10 +58,11 @@ router.get('/transfers', function (req, res, next) {
         title: "Transfers",
         currentRoute: "transfers",
         players: req.players,
+        elementTypes: req.elementTypes,
         teams: req.teams,
         myTeam: req.myTeam,
-        transferLimit: req.session.user.transfer_limit,
-        transferTurn: req.session.user.transfer_turn,
+        transferLimit: req.session.user.transferLimit,
+        transferTurn: req.session.user.transferTurn,
         fixtures: req.fixtures
     });
 });
@@ -85,170 +76,66 @@ router.post('/transfers', function (req, res, next) {
 }, function (req, res, next) {
     var playerIn = +req.body.playerIn;
     var playerOut = (req.body.playerOut != undefined) ? +req.body.playerOut : -1;
-    var gw = req.app.locals.gw;
-    es.update({
-        index: "game",
-        type: "team",
-        id: req.session.user.username + "_" + gw,
-        body: {
-            script: "ctx._source.transfers += transfer",
-            params: {
-                transfer: {
-                    in: playerIn,
-                    out: playerOut
-                }
-            },
-            upsert: {
-                account: req.session.user.username,
-                gw: gw,
-                transfers: [{
-                    in: playerIn,
-                    out: playerOut
-                }],
-                players: []
-            }
-        }
-    }, function (error, response) {
-        if (error) throw error;
+    Team.update({
+        username: req.session.user.username,
+        event: req.app.locals.event
+    }, { $push: { transfers: { in: playerIn, out: playerOut } } }, function (err, team) {
+        req.currentTeam = team;
         next();
     });
 }, function (req, res, next) {
-    es.get({
-        index: "game",
-        type: "team",
-        id: req.session.user.username + "_" + (req.app.locals.gw + 1)
-    }, function (error, response) {
-        if (response.found) req.currentPlayers = response._source.players; else req.currentPlayers = [];
-        next();
-    });
-}, function (req, res, next) {
-    var currentPlayers = req.currentPlayers;
     var playerIn = +req.body.playerIn;
     var playerOut = (req.body.playerOut != undefined) ? +req.body.playerOut : -1;
-    if (playerOut < 0) {
-        currentPlayers.push({ id: playerIn, score: 0 });
-    } else {
-        for (var i = 0; i < currentPlayers.length; i++) {
-            if (playerOut === currentPlayers[i].id) {
-                currentPlayers[i].id = playerIn;
-            }
+    Team.findOne({ username: req.session.user.username, event: req.app.locals.event + 1 }, (err, team) => {
+        if (playerOut < 0) {
+            team.players.push(playerIn);
+        } else {
+            team.players.forEach(function (player, index, arr) {
+                if (player === +req.body.playerOut);
+                arr[index] = playerIn;
+            }, this);
         }
-    }
-    var gw = req.app.locals.gw;
-    es.update({
-        index: "game",
-        type: "team",
-        id: req.session.user.username + "_" + (gw + 1),
-        body: {
-            doc: {
-                players: currentPlayers
-            },
-            upsert: {
-                account: req.session.user.username,
-                gw: (gw + 1),
-                players: currentPlayers,
-                transfers: []
-            }
-        }
-    }, function (error, response) {
-        if (error) throw error;
-        next();
+        team.save();
     });
 }, function (req, res, next) {
-    es.index({
-        index: "game",
-        type: "player",
-        id: +req.body.playerIn,
-        body: {
-            is_available: false
-        }
-    }, function (error, response) {
+    Player.findOneAndUpdate({ _id: +req.body.playerIn }, { $set: { isAvailable: false } }, function (err, player) {
         next();
     });
 }, function (req, res, next) {
     if (req.body.playerOut != undefined) {
-        es.index({
-            index: "game",
-            type: "player",
-            id: +req.body.playerOut,
-            body: {
-                is_available: true
-            }
-        }, function (error, response) {
+        Player.findOneAndUpdate({ _id: +req.body.playerOut }, { $set: { isAvailable: true } }, function (err, player) {
             next();
         });
     } else {
         next();
     }
 }, function (req, res, next) {
-    es.update({
-        index: "game",
-        type: "account",
-        id: req.session.user.username,
-        body: {
-            script: "ctx._source.transfer_limit -= 1; ctx._source.transfer_turn = false"
-        }
-    }, function (error, response) {
-        if (error) throw error;
-        es.get({
-            index: "game",
-            type: "transfer_order",
-            id: req.session.user.username
-        }, function (error, response) {
-            req.next_user = response._source.next;
-            next();
-        });
+    Account.findOneAndUpdate({ username: req.session.user.username }, { $inc: { transferLimit: -1 } }, function (err, account) {
+        next();
     });
 }, function (req, res, next) {
-    es.get({
-        index: "game",
-        type: "transfer_order",
-        id: req.next_user
-    }, function (error, response) {
-        if (response._source.started) {
-            es.update({
-                index: "game",
-                type: "transfer_order",
-                id: req.next_user,
-                body: {
-                    script: "ctx._source.started = false"
-                }
-            });
-            es.update({
-                index: "game",
-                type: "account",
-                id: response._source.next,
-                body: {
-                    script: "ctx._source.transfer_turn = true"
-                }
-            });
-            es.update({
-                index: "game",
-                type: "transfer_order",
-                id: response._source.next,
-                body: {
-                    script: "ctx._source.started = true"
-                }
-            }, function (error, response) {
+    TransferOrder.findOne({ username: req.session.user.username }, function (err, transferOrder) {
+        req.nextAccount = transferOrder.next;
+        next();
+    });
+}, function (req, res, next) {
+    TransferOrder.findOne({ username: req.nextAccount }, function (err, transferOrder) {
+        if (transferOrder.started) {
+            TransferOrder.update({ username: req.nextAccount }, { $set: { started: false } });
+            Account.update({username: transferOrder.next}, {$set: {transferTurn: true}});
+            TransferOrder.update({ username: transferOrder.next }, { $set: { started: true } }, function (err, transferOrder) {
                 req.session.user.transfer_limit -= 1;
                 req.session.user.transfer_turn = false;
                 res.redirect('transfers');
             });
         } else {
-            es.update({
-                index: "game",
-                type: "account",
-                id: req.next_user,
-                body: {
-                    script: "ctx._source.transfer_turn = true"
-                }
-            }, function (error, response) {
+            Account.update({ username: transferOrder.next }, { $set: { transferTurn: true } }, function (err, account) {
                 req.session.user.transfer_limit -= 1;
                 req.session.user.transfer_turn = false;
                 res.redirect('transfers');
             });
         }
-    })
+    });
 });
 
 module.exports = router;

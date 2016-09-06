@@ -8,22 +8,20 @@ block content
   if session.loggedIn
     if myTeam
       table.table.table-bordered
-        caption Current Points
+        caption Make a Transfer
         thead
           tr
             th Player
             th Team
             th Team Logo
             th Player Type
-            th Score
         tbody
           for player in myTeam.players
             tr
-              td.col-md-3= players[player.id].web_name
-              td.col-md-3= teams[players[player.id].team-1].name
-              td.col-md-2: span.badge-25(class=teams[players[player.id].team-1].short_name)
-              td.col-md-2= players[player.id].element_type
-              td.col-md-2= player.score
+              td.col-md-3= players[player].web_name
+              td.col-md-3= teams[players[player].team-1].name
+              td.col-md-3: span.badge-25(class=teams[players[player].team-1].short_name)
+              td.col-md-3= elementTypes[players[player].element_type-1].singular_name_short
     if transferTurn
       if transferLimit>0
         div
@@ -46,7 +44,7 @@ block content
                     option(value= player.id)= players[player.id].web_name
             button.btn.btn-primary(type='submit', action='transfers') Make Transfer
   table.table.table-bordered
-    caption Fixtures
+    caption Next Fixtures
     tbody
       for fixture in fixtures 
         tr

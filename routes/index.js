@@ -6,17 +6,17 @@ var fplUtils = require('../fplUtils');
 var mongoose = require('mongoose');
 var Team = require('../models/Team');
 
-router.all('/', function (req, res, next) {
-    fs.readFile('public/fplStaticData.json', 'utf8', function (err, data) {
+router.get('/', function (req, res, next) {
+    fs.readFile('public/data/bootstrap-static.json', 'utf8', function (err, data) {
         if (err) throw err;
         var body = JSON.parse(data);
         req.teams = body.teams;
-        req.players = body.elements;
-        req.elementType = body.element_types;
+        req.elements = body.elements;
+        req.elementTypes = body.element_types;
         next();
     });
 }, function (req, res, next) {
-    fs.readFile('public/fplCurrentFixtures.json', 'utf8', function (err, data) {
+    fs.readFile('public/data/event/' + req.app.locals.event + '.json', 'utf8', function (err, data) {
         if (err) throw err;
         var body = JSON.parse(data);
         req.fixtures = body.fixtures;
@@ -40,8 +40,8 @@ router.all('/', function (req, res, next) {
         title: 'Home',
         currentRoute: 'index',
         teams: req.teams,
-        players: req.players,
-        elementType: req.elementType,
+        elements: req.elements,
+        elementTypes: req.elementTypes,
         fixtures: req.fixtures,
         myTeam: req.myTeam
     });

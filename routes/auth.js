@@ -1,22 +1,16 @@
 var express = require('express');
 var router = express.Router();
-var elasticsearch = require('elasticsearch');
-var es = new elasticsearch.Client({
-	host: 'localhost:9200'
-});
+var mongoose = require('mongoose');
+var Account = require('../models/Account');
 
 router.route('/login')
 	.get(function (req, res) {
 		res.render('login', { title: "Login", currentRoute: 'login', query: req.query });
 	})
 	.post(function (req, res) {
-		es.get({
-			index: "game",
-			type: "account",
-			id: req.body.inputUsername
-		}, function (error, response) {
-			if (response.found && response._source.password === req.body.inputPassword) {
-				req.session.user = response._source;
+		Account.findOne({ username: req.body.inputUsername }, function (err, account) {
+			if (account.password === req.body.inputPassword) {
+				req.session.user = account;
 				delete req.session.user.password;
 				req.session.loggedIn = true;
 				if (req.query.next) {
@@ -24,7 +18,7 @@ router.route('/login')
 				} else {
 					res.redirect('/');
 				}
-			} else if (!response.found) {
+			} else if (!account) {
 				res.redirect('/login?err=username');
 			} else {
 				res.redirect('/login?err=password');
@@ -42,54 +36,29 @@ router.route('/signup')
 		res.render('signup', { title: "Signup", currentRoute: "signup", query: req.query });
 	})
 	.post(function (req, res) {
-		es.get({
-			index: "game",
-			type: "account",
-			id: req.body.inputUsername
-		}, function (error, response) {
-			if (response.found) {
+		Account.findOne({ username: req.body.inputUsername }, function (err, account) {
+			if (account) {
 				res.redirect('/signup?err=username');
 			} else {
-				es.count({
-					index: "game",
-					type: "account",
-					body: {
-						filter: {
-							term: {
-								email: req.body.inputEmail
-							}
-						}
-					}
-				}, function (error, response) {
-					if (response.count > 0) {
+				Account.find({ email: req.body.inputEmail }, function (err, accounts) {
+					if (accounts.length > 0) {
 						res.redirect('/signup?err=email');
 					} else {
-						var body = {
+						var acc = new Account({
 							"email": req.body.inputEmail,
 							"username": req.body.inputUsername,
 							"name": req.body.inputFullName,
 							"password": req.body.inputPassword,
-							"team_name": req.body.inputTeamName,
-							"transfer_turn": false,
-							"transfer_limit": 11
-						};
-						es.create({
-							index: "game",
-							type: "account",
-							id: req.body.inputUsername,
-							body: body
-						}, function (error, response) {
-							if (error) throw error;
-							es.get({
-								index: "game",
-								type: "account",
-								id: req.body.inputUsername
-							}, function (error, response) {
-								req.session.user = response._source;
-								delete req.session.user.password;
-								req.session.loggedIn = true;
-								res.redirect('/');
-							});
+							"teamName": req.body.inputTeamName,
+							"transferTurn": false,
+							"transferLimit": 11
+						});
+						acc.save(function (err, acc) {
+							if (err) throw err;
+							req.session.user = acc;
+							delete req.session.user.password;
+							req.session.loggedIn = true;
+							res.redirect('/');
 						});
 					}
 				});
@@ -117,31 +86,18 @@ router.route('/settings')
 			doc["username"] = req.body.inputUsername;
 		}
 		if (req.body.inputTeamName && req.body.inputTeamName !== "") {
-			doc["team_name"] = req.body.inputTeamName;
+			doc["teamName"] = req.body.inputTeamName;
 		}
 		if (req.session.loggedIn) {
-			es.update({
-				index: "game",
-				type: "account",
-				id: req.session.user.username,
-				body: {
-					doc: doc
-				}
-			}, function (error, response) {
-				es.get({
-					index: "game",
-					type: "account",
-					id: response._id
-				}, function (error, response) {
-					req.session.user = response._source;
-					delete req.session.user.password;
-					req.session.loggedIn = true;
-					res.redirect('settings?done=true');
-				})
+			Account.findOneAndUpdate({ username: req.session.user.username }, doc, function (err, account) {
+				req.session.user = account;
+				delete req.session.user.password;
+				req.session.loggedIn = true;
+				res.redirect('settings?done=true');
 			});
 		} else {
 			res.redirect('login?next=settings');
 		}
-	})
+	});
 
 module.exports = router
