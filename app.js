@@ -7,7 +7,7 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost/myFpl').then(()=>console.log("Connected to mongoDB!"));
+mongoose.connect('mongodb://myfpl.club/myFpl').then(()=>console.log("Connected to mongoDB!"));
 
 var app = express();
 

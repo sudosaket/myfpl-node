@@ -45,13 +45,21 @@ router.get('/history/:username?', function (req, res, next) {
             req.account = req.session.user.name;
             username = req.session.user.username;
         }
-        Team.find({ username: username }, {}, { sort: { event: -1 } }, (err, teams) => {
-            teams.pop();
+        Team.find({ username: username }, {}, { sort: { event: 1 } }, (err, teams) => {
+            var history = [];
             teams.shift();
+            teams.every(function(team, index) {
+                if (index === req.app.locals.event) {
+                    return false;
+                } else {
+                    history.push(team);
+                    return true;
+                }
+            });
             res.render('history', {
                 title: 'History',
                 currentRoute: 'history',
-                history: teams,
+                history: history.reverse(),
                 account: req.account,
                 teams: req.teams,
                 elements: req.elements,
