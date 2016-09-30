@@ -41,7 +41,7 @@ block content
                 select#playerOut.form-control(name='playerOut')
                   option(value='', selected, disabled) Please select
                   for player in myTeam.players
-                    option(value= player.id)= players[player.id].web_name
+                    option(value= player)= players[player].web_name
             button.btn.btn-primary(type='submit', action='transfers') Make Transfer
   table.table.table-bordered
     caption Next Fixtures

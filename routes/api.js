@@ -76,7 +76,7 @@ router.get('/update-live-points', function (req, res) {
 router.get('/update-all-points', function (req, res) {
     Team.find().exec(function (err, teams) {
         teams.forEach(function (team) {
-            if (team.event === 0 || team.event === req.app.locals.event+1) return;
+            if (team.event === 0 || team.event > req.app.locals.event) return;
             var elements = JSON.parse(fs.readFileSync('public/data/event/'+team.event+'.json', 'utf8'));
             var totalPoints = 0;
             team.players.forEach(function (player) {

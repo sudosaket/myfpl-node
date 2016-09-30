@@ -31,7 +31,7 @@ app.use(function (req, res, next) {
 });
 
 // set local variables
-app.locals.event = 3;
+app.locals.event = 6;
 
 // routing
 var index = require('./routes/index');
