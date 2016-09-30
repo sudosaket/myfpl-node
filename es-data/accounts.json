@@ -1,30 +1,3 @@
-{
-    "_id": "saket",
-    "email": "saket.m17@outlook.com",
-    "username": "saket",
-    "name": "Saket Mehta",
-    "password": "saket",
-    "team_name": "Rocket",
-    "transfer_turn": false,
-    "transfer_limit": 11
-}
-{
-    "_id": "sanjog",
-    "email": "sanjogpo3@gmail.com",
-    "username": "sanjog",
-    "name": "Sanjog Patidar",
-    "password": "sanjog",
-    "team_name": "Babydoll",
-    "transfer_turn": false,
-    "transfer_limit": 11
-}
-{
-    "_id": "ban",
-    "email": "bwlyndem@gmail.com",
-    "username": "ban",
-    "name": "Banmanlang",
-    "password": "ban",
-    "team_name": "Sweet Pea",
-    "transfer_turn": false,
-    "transfer_limit": 11
-}
+{"_index":"game","_type":"account","_id":"saket","_score":1,"_source":{"username":"saket","transfer_limit":0,"transfer_turn":true,"email":"saket.m17@outlook.com","team_name":"Rocket","name":"Saket Mehta","password":"saket"}}
+{"_index":"game","_type":"account","_id":"sanjog","_score":1,"_source":{"username":"sanjog","transfer_limit":0,"transfer_turn":false,"email":"sanjogpo3@gmail.com","team_name":"Babydoll","name":"Sanjog Patidar","password":"sanjog"}}
+{"_index":"game","_type":"account","_id":"ban","_score":1,"_source":{"username":"ban","transfer_limit":0,"transfer_turn":false,"email":"bwlyndem@gmail.com","team_name":"Sweet Pea","name":"Banmanlang","password":"ban"}}

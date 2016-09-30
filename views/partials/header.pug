@@ -12,18 +12,19 @@ nav.navbar.navbar-default
                 li(class=(currentRoute === 'index')?"active":"")
                     a(href='/') Home
                 li(class=(currentRoute === 'transfers')?"active":"")
-                    a(href='transfers') Transfers
+                    a(href='/transfers') Transfers
                 li(class=(currentRoute === 'standings')?"active":"")
-                    a(href='standings') Standings
+                    a(href='/standings') Standings
+                li(class=(currentRoute === 'history')?"active":"")
+                    a(href='/history') History
             ul.nav.navbar-nav.navbar-right
                 if session.loggedIn
                     li(class=(currentRoute === 'settings')?"active":"")
-                        a(href='settings') Settings
+                        a(href='/settings') Settings
                     li(class=(currentRoute === 'logout')?"active":"")
-                        a(href='logout') Logout
-                else
-
-                    li(class=(currentRoute === 'signup')?"active":"")
-                        a(href='signup') Signup
+                        a(href='/logout') Logout
+                else if true
+                    //- li(class=(currentRoute === 'signup')?"active":"")
+                    //-     a(href='signup') Signup
                     li(class=(currentRoute === 'login')?"active":"")
-                        a(href='login') Login
+                        a(href='/login') Login

@@ -7,8 +7,17 @@ block content
   div.welcome: h1 Standings
   table.table.table-bordered
     tbody
-      for account in accounts
-        tr
-          td.col-md-4= account._source.team_name
-          td.col-md-4= account._source.name
-          td.col-md-4= teams.get(account._source.username)
+      mixin rows
+        td.col-md-4: a(href="/history/"+team._id) #{team.teamName}
+        td.col-md-4= team.name
+        td.col-md-4= team.totalPoints
+      for team, index in teams
+        if index == 0
+          tr.success
+            +rows
+        else if index == teams.length-1
+          tr.danger
+            +rows
+        else if true
+          tr.warning
+            +rows
